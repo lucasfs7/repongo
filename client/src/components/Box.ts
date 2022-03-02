@@ -10,6 +10,8 @@ import {
   LayoutProps,
   position,
   PositionProps,
+  space,
+  SpaceProps,
 } from 'styled-system'
 
 export interface BoxProps
@@ -17,7 +19,8 @@ export interface BoxProps
     FlexboxProps,
     PositionProps,
     ColorProps,
-    BorderProps {}
+    BorderProps,
+    SpaceProps {}
 
 const Box = styled.div<BoxProps>`
   ${layout}
@@ -25,6 +28,7 @@ const Box = styled.div<BoxProps>`
   ${position}
   ${color}
   ${border}
+  ${space}
 `
 
 export default Box

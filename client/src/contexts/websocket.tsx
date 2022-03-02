@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useEffect } from 'react'
+import { createContext, ReactNode, useEffect, useState } from 'react'
 
 interface WsContextProps {
   connection: WebSocket
+  isConnected: boolean
 }
 
 const WsContext = createContext<WsContextProps | null>(null)
@@ -12,12 +13,18 @@ interface WebsocketProviderProps {
 }
 
 export function WebsocketProvider({ url, children }: WebsocketProviderProps) {
+  const [isConnected, setIsConnected] = useState(false)
   const connection = new WebSocket(url)
 
-  useEffect(() => () => connection.close(), [])
+  useEffect(() => {
+    connection.onopen = () => setIsConnected(true)
+    return () => connection.close()
+  }, [])
 
   return (
-    <WsContext.Provider value={{ connection }}>{children}</WsContext.Provider>
+    <WsContext.Provider value={{ connection, isConnected }}>
+      {children}
+    </WsContext.Provider>
   )
 }
 

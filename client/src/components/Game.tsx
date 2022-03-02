@@ -2,51 +2,19 @@ import { useContext, useState } from 'react'
 
 import Box from './Box'
 import Text from './Text'
-import Paddle, { DEFAULT_PADDLE_HEIGHT, DEFAULT_PADDLE_SHIFT } from './Paddle'
+import Paddle from './Paddle'
 import Ball from './Ball'
 import WsContext from '../contexts/websocket'
 import useKeypress from '../hooks/use-keypress'
+import { GameStatus, GameState, defaultGameState } from '../utils/state'
 
 const GAME_WINDOW_WIDTH = 800
 const GAME_WINDOW_HEIGHT = 600
-const INITIAL_PADDLE_POSITION =
-  GAME_WINDOW_HEIGHT / 2 - DEFAULT_PADDLE_HEIGHT / 2
-
-interface Position {
-  x: number
-  y: number
-}
-
-interface PlayerState extends Position {
-  score: number
-}
-
-interface BallState extends Position {}
-
-interface GameState {
-  player1: PlayerState
-  player2: PlayerState
-  ball: BallState
-}
 
 export default function Game() {
-  const { connection: ws } = useContext(WsContext)
-  const [{player1, player2, ball}, setGameState] = useState<GameState>({
-    player1: {
-      x: DEFAULT_PADDLE_SHIFT,
-      y: INITIAL_PADDLE_POSITION,
-      score: 0,
-    },
-    player2: {
-      x: DEFAULT_PADDLE_SHIFT,
-      y: INITIAL_PADDLE_POSITION,
-      score: 0,
-    },
-    ball: {
-      x: GAME_WINDOW_WIDTH / 2,
-      y: GAME_WINDOW_HEIGHT / 2,
-    }
-  })
+  const { connection: ws, isConnected } = useContext(WsContext)
+  const [{ player1, player2, ball, status }, setGameState] =
+    useState<GameState>(defaultGameState)
 
   ws.onmessage = function onWsMessage(event) {
     const data = JSON.parse(event.data)
@@ -112,21 +80,72 @@ export default function Game() {
       justifyContent="center"
       height="100%"
     >
-      <Text as="h1">RePonGO</Text>
-      <Text as="h2" my={20}>
-        {player1.score} - {player2.score}
-      </Text>
-      <Box
-        width={GAME_WINDOW_WIDTH}
-        height={GAME_WINDOW_HEIGHT}
-        position="relative"
-        bg="black"
-        borderRadius={10}
-      >
-        <Paddle top={player1.y} left={player1.x} />
-        <Ball top={ball.y} left={ball.x} />
-        <Paddle top={player2.y} right={DEFAULT_PADDLE_SHIFT} />
+      <Box bg="black" color="white" px={10} border="1px dashed">
+        <Text as="h1" textAlign="center" my={20}>
+          RePonGO
+        </Text>
       </Box>
+      {isConnected ? (
+        <>
+          <Box
+            width={GAME_WINDOW_WIDTH}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="end"
+            my={20}
+          >
+            <Text>🠕 = UP | 🠗 = DOWN</Text>
+            <Text as="h1">
+              {player1.score} - {player2.score}
+            </Text>
+            <Text>W = UP | S = DOWN</Text>
+          </Box>
+          <Box
+            width={GAME_WINDOW_WIDTH}
+            height={GAME_WINDOW_HEIGHT}
+            position="relative"
+            bg="black"
+          >
+            {status === GameStatus.START ? (
+              <Box
+                width="100%"
+                bg="white"
+                position="absolute"
+                left="0"
+                top={GAME_WINDOW_HEIGHT / 2 - 18}
+                p={10}
+              >
+                <Text fontSize={26} textAlign="center">
+                  press [space] to start
+                </Text>
+              </Box>
+            ) : (
+              <>
+                <Paddle
+                  top={player1.y - player1.height / 2}
+                  left={player1.x}
+                  width={player1.width}
+                  height={player1.height}
+                />
+                <Ball
+                  top={ball.y}
+                  left={ball.x}
+                  width={ball.radius * 2}
+                  height={ball.radius * 2}
+                />
+                <Paddle
+                  top={player2.y - player2.height / 2}
+                  left={player2.x}
+                  width={player2.width}
+                  height={player2.height}
+                />
+              </>
+            )}
+          </Box>
+        </>
+      ) : (
+        <Text mt={20}>connecting to game server...</Text>
+      )}
     </Box>
   )
 }

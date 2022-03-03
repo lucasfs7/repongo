@@ -5,9 +5,9 @@ A simple pong game where you controll in the browser and the game calculates in 
 
 ## Client
 
-bundler: [parcel](https://parceljs.org/)
-render library: [react](https://reactjs.org/)
-styles: [styled-components](https://styled-components.com/) + [styled-system](https://styled-system.com/)
+- bundler: [parcel](https://parceljs.org/)
+- render library: [react](https://reactjs.org/)
+- styles: [styled-components](https://styled-components.com/) + [styled-system](https://styled-system.com/)
 
 ### installing dependencies
 ```
@@ -26,8 +26,8 @@ $ npm run start
 
 ## Server
 
-websockets library: [golang.org/x/net/websocket](https://golang.org/x/net/websocket)
-pong implementation inspired by: [go-pong](https://github.com/jtestard/go-pong)
+- websockets library: [golang.org/x/net/websocket](https://golang.org/x/net/websocket)
+- pong implementation inspired by: [go-pong](https://github.com/jtestard/go-pong)
 
 ### running
 ```

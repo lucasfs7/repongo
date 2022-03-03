@@ -1,9 +1,12 @@
 import Game from './components/Game'
 import { WebsocketProvider } from './contexts/websocket'
 
+const serverUrl = `ws://${process.env.REACT_APP_SERVER_URL}`
+console.log(serverUrl)
+
 export default function App() {
   return (
-    <WebsocketProvider url="ws://localhost:8080">
+    <WebsocketProvider url={serverUrl}>
       <Game />
     </WebsocketProvider>
   )

@@ -2,5 +2,6 @@ node_modules/
 .parcel-cache/
 dist/
 .env.production
+.firebase/
 .firebaserc
 firebase.json

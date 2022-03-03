@@ -25,9 +25,10 @@ export default function Game() {
     'Space',
     (e) =>
       e.type === 'keyup' &&
+      status !== GameStatus.IN_PROGRESS &&
       ws.send(
         JSON.stringify({
-          type: 'start',
+          type: status === GameStatus.GAME_OVER ? 'restart' : 'start',
         }),
       ),
   )
@@ -106,7 +107,7 @@ export default function Game() {
             position="relative"
             bg="black"
           >
-            {status === GameStatus.START ? (
+            {status === GameStatus.NOT_STARTED && (
               <Box
                 width="100%"
                 bg="white"
@@ -119,10 +120,28 @@ export default function Game() {
                   press [space] to start
                 </Text>
               </Box>
-            ) : (
+            )}
+            {status === GameStatus.GAME_OVER && (
+              <Box
+                width="100%"
+                bg="white"
+                position="absolute"
+                left="0"
+                top={GAME_WINDOW_HEIGHT / 2 - 18}
+                p={10}
+              >
+                <Text fontSize={26} textAlign="center">
+                  {player1.score > player2.score
+                    ? 'player1 wins!'
+                    : 'player2 wins!'}
+                  {' | press [space] to restart'}
+                </Text>
+              </Box>
+            )}
+            {status === GameStatus.IN_PROGRESS && (
               <>
                 <Paddle
-                  top={player1.y - player1.height / 2}
+                  top={player1.y}
                   left={player1.x}
                   width={player1.width}
                   height={player1.height}
@@ -134,7 +153,7 @@ export default function Game() {
                   height={ball.radius * 2}
                 />
                 <Paddle
-                  top={player2.y - player2.height / 2}
+                  top={player2.y}
                   left={player2.x}
                   width={player2.width}
                   height={player2.height}

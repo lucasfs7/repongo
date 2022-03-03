@@ -1,7 +1,7 @@
 export enum GameStatus {
-  START,
-  PLAY,
-  GAMEOVER,
+  NOT_STARTED,
+  IN_PROGRESS,
+  GAME_OVER,
 }
 export interface Position {
   x: number
@@ -26,7 +26,7 @@ export interface GameState {
 }
 
 export const defaultGameState = {
-  status: GameStatus.START,
+  status: GameStatus.NOT_STARTED,
   player1: {
     x: 0,
     y: 0,
